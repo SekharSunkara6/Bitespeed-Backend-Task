@@ -175,10 +175,8 @@ You can test and interact with the API using [Postman](https://www.postman.com/)
 
 ## Data Storage in Supabase
 
-**All contact data is securely stored in your Supabase PostgreSQL database, specifically in the `contact` table.**  
-Whenever a request is made to the `/identify` endpoint, your backend reads from and writes to this table in Supabase.  
-You can view, query, and manage the data in the `contact` table directly from your Supabase dashboard.  
-All new contacts, updates, and links created by your API logic are reflected in this table, ensuring your data is always up to date and accessible for future API calls.
+- All contact data is securely stored in your Supabase PostgreSQL database, specifically in the `contact` table. Whenever a request is made to the `/identify` endpoint, your backend reads from and writes to this table in Supabase.  
+- You can view, query, and manage the data in the `contact` table directly from your Supabase dashboard. All new contacts, updates, and links created by your API logic are reflected in this table, ensuring your data is always up to date and accessible for future API calls.
 
 ## Deployment
 
