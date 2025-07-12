@@ -116,6 +116,11 @@ All contact data is stored in the `contact` table in Supabase.
 - **Primary contacts**: `linkPrecedence = 'primary'`, `linkedId = NULL`
 - **Secondary contacts**: `linkPrecedence = 'secondary'`, `linkedId` points to primary contact’s `id`
 
+### **Supabase Table Screenshot**
+
+Below is a sample view of the `contact` table in Supabase:
+![Supabase contact table `assets/supabase.png` with your actual screenshot path.)*
+
 ## API Documentation
 
 ### **POST `/identify`**
@@ -171,6 +176,11 @@ You can test and interact with the API using [Postman](https://www.postman.com/)
 6. **Click "Send".**
 7. **View the response** in the lower section. You should see a JSON object with contact details.
 
+#### **Postman Screenshot**
+
+Below is an example of a POST request to `/identify` in Postman:
+![Postman API usage](assets/postman.pngman.png` with your actual screenshot path.)*
+
 **You can also use the API with `curl` or any HTTP client.**
 
 ## Data Storage in Supabase
@@ -203,3 +213,6 @@ The backend is deployed on Render for public access.
 - Use Postman, curl, or similar tools to interact with the API.
 - All contact data is securely stored in Supabase and managed via the backend.
 - For questions or issues, contact [sekharsunkara2002@gmail.com].
+
+**Replace the image URLs with your actual screenshot paths in the `assets` folder.  
+You’re all set for a clean, professional, and reviewer-friendly submission!**
