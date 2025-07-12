@@ -1,135 +1,171 @@
-# Bitespeed Backend Task: Identity Reconciliation
+# Bitespeed Backend Task
+
+A Node.js + Express backend for contact identification and linking, built for the Bitespeed engineering challenge.  
+This service provides an API endpoint to identify and merge user contacts based on email and/or phone number, storing data in a Supabase PostgreSQL database.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Setup & Local Development](#setup--local-development)
+- [Environment Variables](#environment-variables)
+- [API Documentation](#api-documentation)
+- [Database Schema](#database-schema)
+- [Deployment](#deployment)
+- [Sample Requests](#sample-requests)
+- [Submission Details](#submission-details)
 
 ## Overview
 
-This project implements the backend for Bitespeed’s identity reconciliation challenge.  
-It provides a RESTful API endpoint `/identify` that links customer contacts (email/phone) to unique identities, even when customers use different details across orders.
+This backend service exposes a REST API to:
+- Identify contacts by email and/or phone number
+- Link contacts as primary or secondary based on matching logic
+- Return all linked emails and phone numbers for a user
 
 ## Features
 
-- **POST /identify**: Accepts an email and/or phone number, and returns the consolidated contact record.
-- **Primary/secondary contact logic**: Links all related contacts, ensuring the oldest is always the primary.
-- **SQL database**: Uses PostgreSQL for persistent storage.
+- **POST `/identify`**: Main endpoint for contact identification and linking
+- **Express.js**: Fast, minimalist backend framework
+- **Supabase PostgreSQL**: Managed relational database
+- **Environment-based configuration**: Secure credentials via environment variables
+- **Production-ready deployment**: Hosted on Render
 
 ## Tech Stack
 
-- **Backend**: Node.js (Express)
-- **Database**: PostgreSQL
+- **Node.js** (v18+)
+- **Express.js**
+- **PostgreSQL** (Supabase)
+- **pg** (Postgres client)
+- **dotenv** (environment variable management)
+- **Render** (deployment)
 
-## Setup Instructions
+## Setup & Local Development
 
-### 1. Clone the Repository
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/SekharSunkara6/Bitespeed-Backend-Task.git
+   cd Bitespeed-Backend-Task
+   ```
 
-```bash
-git clone https://github.com/SekharSunkara6/Bitespeed-Backend-Task.git
-cd Bitespeed-Backend-Task
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Create a `.env` file** in the root directory:
+   ```
+   PGUSER=your_pg_user
+   PGPASSWORD=your_pg_password
+   PGHOST=your_pg_host
+   PGDATABASE=your_pg_database
+   PGPORT=5432
+   ```
+
+4. **Start the server locally:**
+   ```bash
+   npm run dev
+   ```
+   The server runs at [http://localhost:3000](http://localhost:3000).
+
+## Environment Variables
+
+Create a `.env` file with the following keys (replace values with your actual credentials):
+
+```env
+PGUSER=postgres
+PGPASSWORD=your_supabase_password
+PGHOST=your_supabase_host
+PGDATABASE=postgres
+PGPORT=5432
 ```
 
-### 2. Install Dependencies
+## API Documentation
 
-```bash
-npm install
-```
+### **POST `/identify`**
 
-### 3. Configure the Database
+**Description:**  
+Identify and link contacts by email and/or phone number.
 
-- Ensure PostgreSQL is running.
-- Create the database and the `contact` table:
-
-```sql
-CREATE DATABASE bitespeed;
-
-\c bitespeed
-
-CREATE TABLE contact (
-  id SERIAL PRIMARY KEY,
-  phonenumber VARCHAR(20),
-  email VARCHAR(255),
-  linkedid INT,
-  linkprecedence VARCHAR(10) CHECK (linkprecedence IN ('primary', 'secondary')),
-  createdat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updatedat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  deletedat TIMESTAMP
-);
-```
-
-- Update `db.js` with your PostgreSQL credentials if needed.
-
-### 4. Run the Application
-
-```bash
-npm run dev
-```
-
-The server will start on [http://localhost:3000](http://localhost:3000).
-
-## API Usage
-
-### POST `/identify`
-
-#### **Request Body**
-
+**Request Body:**
 ```json
 {
   "email": "mcfly@hillvalley.edu",
   "phoneNumber": "123456"
 }
 ```
-- Either `email`, `phoneNumber`, or both must be provided.
+- At least one of `email` or `phoneNumber` is required.
 
-#### **Response Example**
-
+**Response:**
 ```json
 {
   "contact": {
     "primaryContatctId": 1,
-    "emails": ["lorraine@hillvalley.edu", "mcfly@hillvalley.edu"],
+    "emails": ["mcfly@hillvalley.edu"],
     "phoneNumbers": ["123456"],
-    "secondaryContactIds": [23]
+    "secondaryContactIds": []
   }
 }
 ```
 
-#### **Other Valid Request Examples**
+**Error Responses:**
+- `400 Bad Request` if both email and phone number are missing.
+- `500 Internal Server Error` for unexpected issues.
 
-```json
-{ "email": "mcfly@hillvalley.edu" }
-{ "phoneNumber": "123456" }
-{ "email": "lorraine@hillvalley.edu" }
-```
+## Database Schema
 
-## Example cURL Request
+**Table: `contact`**
 
-```bash
-curl -X POST https://your-deployed-url.onrender.com/identify \
-  -H "Content-Type: application/json" \
-  -d '{"email": "mcfly@hillvalley.edu", "phoneNumber": "123456"}'
-```
+| Column         | Type      | Description                                  |
+|----------------|-----------|----------------------------------------------|
+| id             | integer   | Primary key                                  |
+| phoneNumber    | text      | Phone number                                 |
+| email          | text      | Email address                                |
+| linkedId       | integer   | Points to primary contact (if secondary)     |
+| linkPrecedence | text      | 'primary' or 'secondary'                     |
+| createdAt      | timestamp | When the contact was created                 |
+| updatedAt      | timestamp | When the contact was last updated            |
+| deletedAt      | timestamp | If deleted, when                             |
 
 ## Deployment
 
-The app is deployed at:  
-**[https://your-deployed-url.onrender.com](https://your-deployed-url.onrender.com)**
+This project is deployed on [Render](https://render.com/).
 
-You can test the `/identify` endpoint using the deployed URL.
+**Production URL:**  
+`https://bitespeed-backend-task-mnst.onrender.com/`
 
-## Project Structure
+- The root (`/`) route returns a health check message.
+- The `/identify` endpoint is available for POST requests.
 
+## Sample Requests
+
+**POST `/identify`**
+
+```bash
+curl -X POST https://bitespeed-backend-task-mnst.onrender.com/identify \
+  -H "Content-Type: application/json" \
+  -d '{"email":"mcfly@hillvalley.edu","phoneNumber":"123456"}'
 ```
-.
-├── db.js
-├── index.js
-├── package.json
-├── README.md
-└── ...
+
+**Sample Response**
+```json
+{
+  "contact": {
+    "primaryContatctId": 1,
+    "emails": ["mcfly@hillvalley.edu"],
+    "phoneNumbers": ["123456"],
+    "secondaryContactIds": []
+  }
+}
 ```
+
+## Submission Details
+
+- **Github Repository Link:** [https://github.com/yourusername/Bitespeed-Backend-Task](https://github.com/yourusername/Bitespeed-Backend-Task)
+- **Hosted Endpoint:** [https://bitespeed-backend-task-mnst.onrender.com/](https://bitespeed-backend-task-mnst.onrender.com/)
 
 ## Notes
 
-- Only JSON request bodies are supported.
-- Table and column names are all lowercase as per PostgreSQL conventions.
-- The service is idempotent: repeated requests with the same data yield the same result.
-
-**Replace `https://your-deployed-url.onrender.com` with your actual deployed URL after deployment!**
-
-If you need help with deployment or have any other questions, just ask! 🚀
+- This is a backend API only; no frontend/UI is provided.
+- Use Postman, curl, or similar tools to interact with the API.
+- For questions or issues, please contact [sekharsunkara2002@gmail.com].
