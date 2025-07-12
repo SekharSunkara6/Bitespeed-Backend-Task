@@ -119,7 +119,7 @@ All contact data is stored in the `contact` table in Supabase.
 ### **Supabase Table Screenshot**
 
 Below is a sample view of the `contact` table in Supabase:
-![Supabase contact table `assets/supabase.png` with your actual screenshot path.)*
+![Supabase contact table](assets/supabase.png)
 
 ## API Documentation
 
@@ -179,7 +179,7 @@ You can test and interact with the API using [Postman](https://www.postman.com/)
 #### **Postman Screenshot**
 
 Below is an example of a POST request to `/identify` in Postman:
-![Postman API usage](assets/postman.pngman.png` with your actual screenshot path.)*
+![Postman API usage](assets/postman.png)
 
 **You can also use the API with `curl` or any HTTP client.**
 
